@@ -166,6 +166,7 @@
        [label "+"]
        [callback (λ (button evt)
                    ; ask the user to enter the title of the series
+                   (send title-tfield focus)
                    (send title-dialog show #t))]))
 
 ; immediately

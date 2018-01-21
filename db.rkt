@@ -185,7 +185,7 @@
   (for/list ([db-obj (select-data-objects db-conn mc)])
     (get-column title db-obj)))
 
-; error if title does not exist in medium
+; default to 3 if title does not exist in medium
 (define/contract (get-rating #:db-conn [db-conn sqlc] medium title)
   (->* ([or/c 'anime 'cartoon 'comic 'ln 'manga 'television] string?)
        (#:db-conn connection?)
@@ -197,9 +197,7 @@
           [else #f]))
   (if db-obj
       (get-column rating db-obj)
-      (raise-arguments-error 'get-rating "nonexistent title in medium"
-                             "Title" title
-                             "Medium" medium)))
+      3))
 
 (define/contract (get-date-start #:db-conn [db-conn sqlc] medium title)
   (->* ([or/c 'anime 'cartoon 'comic 'ln 'manga 'television] string?)
@@ -210,11 +208,12 @@
     (cond [(db-has-key? #:db-conn db-conn medium title)
            (make-data-object db-conn mc title)]
           [else #f]))
-  (if db-obj
-      (get-column date-start db-obj)
-      (raise-arguments-error 'get-rating "nonexistent title in medium"
-                             "Title" title
-                             "Medium" medium)))
+  (cond [db-obj
+         (define date-start (get-column date-start db-obj))
+         (if (number? date-start)
+             (number->string date-start)
+             date-start)]
+        [else ""]))
 
 (define/contract (get-progress #:db-conn [db-conn sqlc] medium title)
   (->* ([or/c 'anime 'cartoon 'comic 'ln 'manga 'television] string?)
@@ -225,11 +224,12 @@
     (cond [(db-has-key? #:db-conn db-conn medium title)
            (make-data-object db-conn mc title)]
           [else #f]))
-  (if db-obj
-      (get-column progress db-obj)
-      (raise-arguments-error 'get-rating "nonexistent title in medium"
-                             "Title" title
-                             "Medium" medium)))
+  (cond [db-obj
+         (define progress (get-column progress db-obj))
+         (if (number? progress)
+             (number->string progress)
+             progress)]
+        [else ""]))
 
 (define/contract (get-date-end #:db-conn [db-conn sqlc] medium title)
   (->* ([or/c 'anime 'cartoon 'comic 'ln 'manga 'television] string?)
@@ -240,11 +240,12 @@
     (cond [(db-has-key? #:db-conn db-conn medium title)
            (make-data-object db-conn mc title)]
           [else #f]))
-  (if db-obj
-      (get-column date-end db-obj)
-      (raise-arguments-error 'get-rating "nonexistent title in medium"
-                             "Title" title
-                             "Medium" medium)))
+  (cond [db-obj
+         (define date-end (get-column date-end db-obj))
+         (if (number? date-end)
+             (number->string date-end)
+             date-end)]
+        [else ""]))
 
 (define/contract (get-comments #:db-conn [db-conn sqlc] medium title)
   (->* ([or/c 'anime 'cartoon 'comic 'ln 'manga 'television] string?)
@@ -255,11 +256,12 @@
     (cond [(db-has-key? #:db-conn db-conn medium title)
            (make-data-object db-conn mc title)]
           [else #f]))
-  (if db-obj
-      (get-column comments db-obj)
-      (raise-arguments-error 'get-rating "nonexistent title in medium"
-                             "Title" title
-                             "Medium" medium)))
+  (cond [db-obj
+         (define comments (get-column comments db-obj))
+         (if (number? comments)
+             (number->string comments)
+             comments)]
+        [else ""]))
 
 ; create a new entry in the correct table
 ; if the entry already exists, don't do much of anything
