@@ -88,7 +88,7 @@
                              (string->symbol
                               (string-downcase
                                (send choice get-string-selection))))
-                   (for ([title (in-list (table-titles (unbox medium-box)))])
+                   (for ([title (in-list (sort (table-titles (unbox medium-box)) string<?))])
                      (send title-lbox append title))
                    ; set info side to defaults
                    (set-info-defaults!))]))
@@ -200,7 +200,7 @@
                       [anime-lst (table-titles 'anime)])
                   (if (null? anime-lst)
                       default
-                      anime-lst))]
+                      (sort anime-lst string<?)))]
        [callback (λ (lbox evt)
                    (when (eq? (send evt get-event-type) 'list-box)
                      (define title (send lbox get-string-selection))
